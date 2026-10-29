@@ -124,24 +124,26 @@ class Screen:
                 if (0 <= screenY < len(self.output) and
                     0 <= screenX < len(self.output[screenY]) - 1):
                     self.output[screenY][screenX] = j
+    def moveBlockDown(self, blockMask, blank, i):
+        i = 0
+
+        while i <= len(self.output) - len(blockMask):
+            self.place(blockMask, 0, i)
+
+            clearTerminal()
+            screen.display()
+
+            time.sleep(0.2)
+
+            self.place(blank, 0, i)
+            i += 1
+
+        # Display the final position
+        self.place(blockMask, 0, i - 1)
+        clearTerminal()
+        self.display()
+
 # Main gameloop
 screen = Screen()
 block1 = Block(2)
-
-i = 0
-
-while i <= len(screen.output) - len(block1.shape1Mask):
-    screen.place(block1.shape1Mask, 0, i)
-
-    clearTerminal()
-    screen.display()
-
-    time.sleep(0.2)
-
-    screen.place(block1.blank, 0, i)
-    i += 1
-
-# Display the final position
-screen.place(block1.shape1Mask, 0, i - 1)
-clearTerminal()
-screen.display()
+screen.moveBlockDown(block1.shape2Mask, block1.blank, 0)
