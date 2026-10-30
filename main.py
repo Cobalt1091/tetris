@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import time
 import os
+import threading
+import keyboard
 """
 O: 0
 I: 1
@@ -16,20 +18,12 @@ def translate(x, y):
 def clearTerminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def printMasks(blockType):
-    block1 = Block(blockType)
-    print("Shape 1")
-    for i in block1.shape1Mask:
-        print(i)
-    print("\n Shape 2")
-    for i in block1.shape2Mask:
-        print(i)
-    print("\n Shape 3")
-    for i in block1.shape3Mask:
-        print(i)
-    print("\n Shape 4")
-    for i in block1.shape4Mask:
-        print(i)
+def keyboardListen(x):
+    if keyboard.is_pressed('left'):
+        return(x-1)
+    elif keyboard.is_pressed('right'):
+        return(x+1)
+
 
 class Block:
     def __init__(self, blockType):
@@ -124,26 +118,54 @@ class Screen:
                 if (0 <= screenY < len(self.output) and
                     0 <= screenX < len(self.output[screenY]) - 1):
                     self.output[screenY][screenX] = j
-    def moveBlockDown(self, blockMask, blank, i):
+    def moveBlockDown(self, blockMask, blank, y):
         i = 0
 
         while i <= len(self.output) - len(blockMask):
-            self.place(blockMask, 0, i)
+            self.place(blockMask, y, i)
 
             clearTerminal()
             screen.display()
 
             time.sleep(0.2)
 
-            self.place(blank, 0, i)
+            self.place(blank, y, i)
             i += 1
 
         # Display the final position
-        self.place(blockMask, 0, i - 1)
+        self.place(blockMask, y, i - 1)
         clearTerminal()
         self.display()
+    def clearDatThang(self):
+        countI = 0
+        for i in self.output:
+            countJ = 0
+            for j in i:
+                if j == 1:
+                    self.output[countI][countJ] = 0
+
+                countJ += 1
+            countI += 1
+
 
 # Main gameloop
 screen = Screen()
 block1 = Block(2)
-screen.moveBlockDown(block1.shape2Mask, block1.blank, 0)
+
+for i in range(7):
+    exec(f"block{i} = Block({i})")
+    y = 0
+    for j in range(4):
+        thread1 = Threading.thread(target=keyboardListen, args=(y))
+        exec(f"screen.moveBlockDown(block{i}.shape{j + 1}Mask, block{i}.blank, {})")
+        
+        screen.clearDatThang()
+
+
+
+
+
+
+
+
+
